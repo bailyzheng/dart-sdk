@@ -20,6 +20,9 @@ class UploadPartsTask extends RequestTask<List<Part>> with CacheMixin {
 
   // 上传成功后把 part 信息存起来
   final Map<int, Part> _uploadedPartMap = {};
+  // 上传成功后把 count 信息存起来，防止重复
+  final Map<int, bool> _sentPartCountMap = {};
+  final Map<int, bool> _sendPartToServerCountMap = {};
 
   // 处理分片上传任务的 UploadPartTask 的控制器
   final List<RequestTaskController> _workingUploadPartTaskControllers = [];
@@ -184,12 +187,18 @@ class UploadPartsTask extends RequestTask<List<Part>> with CacheMixin {
     controller
       // UploadPartTask 一次上传一个 chunk，通知一次进度
       ..addSendProgressListener((percent) {
-        _sentPartCount++;
+        if (_sentPartCountMap[partNumber] != true) {
+          _sentPartCount++;
+          _sentPartCountMap[partNumber] = true;
+        }
         notifySendProgress();
       })
       // UploadPartTask 上传完成后触发
       ..addProgressListener((percent) {
-        _sentPartToServerCount++;
+        if (_sendPartToServerCountMap[partNumber] != true) {
+          _sentPartToServerCount++;
+          _sendPartToServerCountMap[partNumber] = true;
+        }
         notifyProgress();
       });
 
