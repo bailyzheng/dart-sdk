@@ -42,4 +42,14 @@ class Storage {
   }) {
     return _baseStorage.putBytes(bytes, token, options: options);
   }
+
+  /// putStream
+  Future<base.PutResponse> putStream(
+      Stream<List<int>> stream,
+      int length,
+      String token, {
+        base.PutOptions? options,
+      }) {
+    return _baseStorage.putStream(stream, length, token, options: options);
+  }
 }

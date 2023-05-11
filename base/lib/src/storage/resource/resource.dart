@@ -7,6 +7,7 @@ import 'package:path/path.dart' show basename;
 
 part 'bytes_resource.dart';
 part 'file_resource.dart';
+part 'stream_resource.dart';
 
 // TODO 等重试机制有调整，Resource 改成一次性的，重试需要重新创建 Resource
 // 抽象的资源概念，帮助统一内部的资源类型管理

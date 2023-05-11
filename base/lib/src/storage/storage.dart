@@ -99,4 +99,41 @@ class Storage {
 
     return task.future;
   }
+
+  Future<PutResponse> putStream(
+      Stream<List<int>> stream,
+      int length,
+      String token, {
+        PutOptions? options,
+      }) async {
+    options ??= PutOptions();
+    RequestTask<PutResponse> task;
+    final useSingle = options.forceBySingle == true ||
+        length < (options.partSize * 1024 * 1024);
+    final resource = StreamResource(
+      extStream: stream,
+      length: length,
+      name: options.key,
+      partSize: useSingle ? null : options.partSize,
+    );
+
+    if (useSingle) {
+      task = PutBySingleTask(
+        resource: resource,
+        options: options,
+        token: token,
+        filename: null,
+      );
+    } else {
+      task = PutByPartTask(
+        token: token,
+        options: options,
+        resource: resource,
+      );
+    }
+
+    taskManager.addTask(task);
+
+    return task.future;
+  }
 }
