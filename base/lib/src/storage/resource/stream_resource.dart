@@ -22,28 +22,30 @@ class StreamResource extends Resource {
 
   @override
   Future<void> close() async {
-    print('enter close');
+    print('stream resource enter close');
     if (status == ResourceStatus.Open) {
       if (!_controller.isClosed) {
-        await _controller.close();
+        print('stream resource not close controller');
+        // await _controller.close();
       }
     }
     return await super.close();
   }
 
   void sendChunkData() {
-    if (tmpData.length > chunkSize) {
-      print('tmpData length is ${tmpData.length}');
-      print('Send Data length is $chunkSize');
+    if (tmpData.length >= chunkSize) {
+      print('tmpData length is ${tmpData.length}, send length is $chunkSize');
       _controller.add(tmpData.sublist(0, chunkSize));
       lastLeft.addAll(tmpData.sublist(chunkSize));
       print('lastLeft length is ${lastLeft.length}');
     } else {
-      print('last chunk');
+      print('last chunk, send length is ${tmpData.length}');
       _controller.add(tmpData);
     }
 
+    print('before: start is $start');
     start += chunkSize;
+    print('after: start is $start');
     // 文件读取完毕
     if (start >= length) {
       print('read finished');
@@ -81,8 +83,8 @@ class StreamResource extends Resource {
       if (lastLeft.length >= chunkSize) {
         print('last left data exceed chunkSize');
         sendChunkData();
-      } else if (start + lastLeft.length >= length - chunkSize) {
-        print('last chunk');
+      } else if (start + lastLeft.length >= length) {
+        print('last chunk, to send');
         sendChunkData();
       } else {
         print('subscribe resume');
