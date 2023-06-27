@@ -80,10 +80,10 @@ class StreamResource extends Resource {
       curCount = tmpData.length;
       print('curCount init to $curCount');
 
-      if (lastLeft.length >= chunkSize) {
+      if (curCount >= chunkSize) {
         print('last left data exceed chunkSize');
         sendChunkData();
-      } else if (start + lastLeft.length >= length) {
+      } else if (start + curCount >= length) {
         print('last chunk, to send');
         sendChunkData();
       } else {
