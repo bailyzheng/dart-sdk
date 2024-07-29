@@ -35,12 +35,12 @@ class StreamResource extends Resource {
   void sendChunkData() {
     if (tmpData.length >= chunkSize) {
       print('tmpData length is ${tmpData.length}, send length is $chunkSize');
-      _controller.add(tmpData.sublist(0, chunkSize));
+      _controller.add(Uint8List.fromList(tmpData.sublist(0, chunkSize)));
       lastLeft.addAll(tmpData.sublist(chunkSize));
       print('lastLeft length is ${lastLeft.length}');
     } else {
       print('last chunk, send length is ${tmpData.length}');
-      _controller.add(tmpData);
+      _controller.add(Uint8List.fromList(tmpData));
     }
 
     print('before: start is $start');
